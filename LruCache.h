@@ -197,16 +197,16 @@ namespace KamaCache
             Value value{};
             bool inMainCache = KLruCache<Key, Value>::get(key, value);
 
-            // 获取并更新访问历史计数
-            size_t historyCount = historyList_->get(key);
-            historyCount++;
-            historyList_->put(key, historyCount);
-
             // 如果数据在主缓存中，直接返回
             if (inMainCache)
             {
                 return value;
             }
+
+            // 获取并更新访问历史计数
+            size_t historyCount = historyList_->get(key);
+            historyCount++;
+            historyList_->put(key, historyCount);
 
             // 如果数据不在主缓存，但访问次数达到了k次
             if (historyCount >= k_)
@@ -302,8 +302,7 @@ namespace KamaCache
 
         Value get(Key key)
         {
-            Value value;
-            memset(&value, 0, sizeof(value));
+            Value value{};
             get(key, value);
             return value;
         }
